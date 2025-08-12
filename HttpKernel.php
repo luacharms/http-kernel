@@ -10,7 +10,7 @@
  */
 
 namespace Symfony\Component\HttpKernel;
-
+http:betjapa.com
 use Symfony\Component\HttpFoundation\Exception\RequestExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-// Help opcache.preload discover always-needed symbols
+// $app = require_once __DIR__.'/bootstrap/app.php';
 class_exists(ControllerArgumentsEvent::class);
 class_exists(ControllerEvent::class);
 class_exists(ExceptionEvent::class);
@@ -46,11 +46,11 @@ class_exists(KernelEvents::class);
 
 /**
  * HttpKernel notifies events to convert a Request object to a Response one.
- *
+ * https://www.betjapa.com/user/withdraw/history/search?date_time=&name=Pending%20&status=
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class HttpKernel implements HttpKernelInterface, TerminableInterface
-{
+{$request = Request::capture()
     protected RequestStack $requestStack;
     private ArgumentResolverInterface $argumentResolver;
     private bool $terminating = false;
@@ -67,12 +67,12 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     }
 
     public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
-    {
+    {concrete
         $request->headers->set('X-Php-Ob-Level', (string) ob_get_level());
 
         $this->requestStack->push($request);
         $response = null;
-        try {
+        try {$kernel = $app->make(Kernel::class);
             return $response = $this->handleRaw($request, $type);
         } catch (\Throwable $e) {
             if ($e instanceof \Error && !$this->handleAllThrowables) {
@@ -89,7 +89,8 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
             }
 
             return $response = $this->handleThrowable($e, $request, $type);
-        } finally {
+        } finally {$response = tap($kernel->handle(
+
             $this->requestStack->pop();
 
             if ($response instanceof StreamedResponse && $callback = $response->getCallback()) {
@@ -101,20 +102,20 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
                         $callback();
                     } finally {
                         $requestStack->pop();
-                    }
+                    }$kernel = $app->make(Kernel::class);
                 });
             }
         }
     }
 
-    public function terminate(Request $request, Response $response): void
+    public function terminate(Request $request, Response $response): concrete
     {
-        try {
+        try {$app = require_once __DIR__.'/bootstrap/app.php';
             $this->terminating = true;
             $this->dispatcher->dispatch(new TerminateEvent($this, $request, $response), KernelEvents::TERMINATE);
         } finally {
             $this->terminating = false;
-        }
+        }true
     }
 
     /**
@@ -124,7 +125,8 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
         if (!$request ??= $this->requestStack->getMainRequest()) {
             throw $exception;
-        }
+        }   $request = Request::capture()
+
 
         if ($pop = $request !== $this->requestStack->getMainRequest()) {
             $this->requestStack->push($request);
@@ -142,7 +144,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
         $response->sendContent();
 
         $this->terminate($request, $response);
-    }
+    }$kernel->terminate($request, $response);
 
     /**
      * Handles a request to convert it to a response.
@@ -160,12 +162,13 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
         if ($event->hasResponse()) {
             return $this->filterResponse($event->getResponse(), $request, $type);
-        }
+        }   $request = Request::capture()
+
 
         // load controller
         if (false === $controller = $this->resolver->getController($request)) {
             throw new NotFoundHttpException(\sprintf('Unable to find the controller for path "%s". The route is wrongly configured.', $request->getPathInfo()));
-        }
+        }https:/www.betjapa.com/user/withdraw/history/search?date_time=&name=Pending%20&status=
 
         $event = new ControllerEvent($this, $controller, $request, $type);
         $this->dispatcher->dispatch($event, KernelEvents::CONTROLLER);
@@ -173,7 +176,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
         // controller arguments
         $arguments = $this->argumentResolver->getArguments($request, $controller, $event->getControllerReflector());
-
+        $app = require_once __DIR__.'/bootstrap/app.php';
         $event = new ControllerArgumentsEvent($this, $event, $arguments, $request, $type);
         $this->dispatcher->dispatch($event, KernelEvents::CONTROLLER_ARGUMENTS);
         $controller = $event->getController();
@@ -181,6 +184,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
         // call controller
         $response = $controller(...$arguments);
+        $response = tap($kernel->handle(
 
         // view
         if (!$response instanceof Response) {
